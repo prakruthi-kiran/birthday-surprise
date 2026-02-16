@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MISSION: PATCH BOYFRIEND_v24</title>
+    <style>
+        body {
+            margin: 0;
+            background: black;
+            color: #00ffcc;
+            font-family: monospace;
+            text-align: center;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        .hidden { display: none; }
+
+        button {
+            background: #00ffcc;
+            border: none;
+            padding: 15px 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.2s;
+            margin: 10px;
+        }
+
+        button:hover {
+            background: white;
+            color: black;
+        }
+
+        #topBar {
+            display: flex;
+            justify-content: space-around;
+            padding: 15px;
+            font-size: 18px;
+        }
+
+        #gameArea {
+            position: relative;
+            width: 100vw;
+            height: 70vh;
+        }
+
+        .bug {
+            position: absolute;
+            font-size: 40px;
+            cursor: pointer;
+            animation: float 1.5s ease-in-out;
+        }
+
+        @keyframes float {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes shake {
+            0% { transform: translate(0px,0px); }
+            25% { transform: translate(-5px,5px); }
+            50% { transform: translate(5px,-5px); }
+            75% { transform: translate(-5px,5px); }
+            100% { transform: translate(0px,0px); }
+        }
+
+        .shake { animation: shake 0.3s; }
+
+        h1.glitch {
+            font-size: 40px;
+            color: #00ffcc;
+            margin-top: 40px;
+        }
+
+        /* Legend box */
+        #legend {
+            margin: 20px auto;
+            width: 90%;
+            max-width: 600px;
+            background: #001a1a;
+            border: 1px solid #00ffcc;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: left;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        #legend span.emoji {
+            font-size: 30px;
+            display: inline-block;
+            width: 40px;
+        }
+
+        /* Quiz styles */
+        #quiz {
+            margin: 20px auto;
+            width: 90%;
+            max-width: 600px;
+            background: #001a1a;
+            border: 1px solid #00ffcc;
+            border-radius: 8px;
+            padding: 20px;
+            font-size: 18px;
+            text-align: left;
+        }
+
+        #quiz h2 {
+            color: #00ffcc;
+            margin-bottom: 15px;
+        }
+
+        .option {
+            margin: 8px 0;
+        }
+
+        .option input {
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        /* Final message */
+        #finalMessage {
+            margin-top: 20px;
+            font-size: 20px;
+            color: #00ffcc;
+            display: none;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            background: #002222;
+            border-radius: 8px;
+            padding: 20px;
+        }
+#winScreen h1 {
+    font-size: 42px;
+}
+
+#winScreen p {
+    font-size: 24px;
+}
+
+#winScreen ul {
+    font-size: 22px;
+    list-style: none;
+    padding: 0;
+}
+
+#winScreen li {
+    margin: 8px 0;
+    font-weight: bold;
+}
+.hiddenBox {
+    display: none;
+    margin-top: 20px;
+    background: #002222;
+    padding: 20px;
+    border-radius: 8px;
+    font-size: 20px;
+    transition: all 0.3s ease;
+}
+
+/* VIBRATION ANIMATION */
+@keyframes vibrate {
+    0% { transform: translate(0); }
+    25% { transform: translate(-2px, 2px); }
+    50% { transform: translate(2px, -2px); }
+    75% { transform: translate(-2px, 2px); }
+    100% { transform: translate(0); }
+}
+
+.vibrate {
+    animation: vibrate 0.3s linear 3;
+}
+
+    </style>
+</head>
+<body>
+
+<!-- START SCREEN -->
+<div id="startScreen">
+    <h1 class="glitch">SYSTEM BREACH DETECTED</h1>
+    <p>Boyfriend_v24.exe has been infected with Chaos Bugs.</p>
+    <p>Eliminate 24 bugs to unlock Birthday Protocol.</p>
+
+    <!-- Emoji Legend -->
+    <div id="legend">
+        <strong>Legend: What each emoji does</strong>
+        <ul>
+            <li><span class="emoji">💪</span> Ladybug - +1 point</li>
+            <li><span class="emoji">🎧</span> Save Icon - +1 point</li>
+            <li><span class="emoji">⚡</span> Lightning - +1 point</li>
+            <li><span class="emoji">💻</span> Laptop - +1 point</li>
+            <li><span class="emoji">🧠</span> Brain - +1 point</li>
+            <li><span class="emoji">💣</span> Bomb - <strong>-2 points and screen shake</strong></li>
+            <li><span class="emoji">👀</span> Eyes - <strong>-2 points and screen shake</strong></li>
+            <li><span class="emoji">😭</span> Crying Face - <strong>-2 points and screen shake</strong></li>
+        </ul>
+    </div>
+
+    <button id="startBtn">INITIATE PATCH</button>
+</div>
+
+<!-- GAME SCREEN -->
+<div id="gameUI" class="hidden">
+    <div id="topBar">
+        <span>Score: <span id="score">0</span>/24</span>
+        <span>Combo: <span id="combo">x1</span></span>
+        <span>Time: <span id="time">100</span>s</span>
+    </div>
+    <div id="gameArea"></div>
+</div>
+
+<!-- QUIZ SCREEN -->
+<div id="quizScreen" class="hidden">
+    <div id="quiz">
+        <h2 id="questionText"></h2>
+        <div id="options"></div>
+        <button id="submitAnswerBtn" disabled>Submit Answer</button>
+    </div>
+</div>
+
+<!-- FINAL SCREEN -->
+<div id="winScreen" class="hidden">
+    <h1>🎉 PATCH SUCCESSFUL 🎉</h1>
+    <p>Version 24 Activated.</p>
+
+    <ul>
+        <li>+100 Intelligence</li>
+        <li>+200 Handsomeness</li>
+        <li>∞ Goof Energy</li>
+        <li>Girlfriend License: Permanent</li>
+    </ul>
+
+    <!-- BUTTONS -->
+    <button id="openMessageBtn">Open Message</button>
+    <button id="surpriseBtn">Click for Surprise</button>
+    <button onclick="location.reload()">Reboot</button>
+
+    <!-- HIDDEN MESSAGE 1 -->
+    <div id="finalMessage" class="hiddenBox">
+        <h2>Happy 24th Birthday mera Jaanuu ❤️</h2>
+        <h3>I really hope and look forward to spending all your future birthdays being right by your side..</h3>
+        <h3>It's been a year since you got ME as your b'day gift 😉 and once again this year your gift has been redeemed 😘</h3>
+        <h3>I love you and I'm waiting to see you soon ❤️</h3>
+        <h4>- with love, Bacchuuu</h4>
+    </div>
+
+    <!-- HIDDEN MESSAGE 2 -->
+    <div id="surpriseMessage" class="hiddenBox">
+        <h2>Give 24 kisses to babyyy for actual birthday gift 💋❤️</h2>
+    </div>
+</div>
+
+
+<!-- Audio -->
+<audio id="correctSound" src="correct.mp3"></audio>
+<audio id="wrongSound" src="wrong.mp3"></audio>
+<audio id="winSound" src="win.mp3"></audio>
+
+<script>
+    // Game variables
+    let score = 0;
+    let timeLeft = 100;
+    let combo = 1;
+    let gameInterval;
+    let timerInterval;
+
+    // Quiz variables
+    const questions = [
+        {
+            question: "What is her most favv food in the world?",
+            options: ["golgappa.", "tacos.", "pizza.", "you."],
+            answer: 3
+        },
+        {
+            question: "If she says 'I'm fine', what does she really mean?",
+            options: ["Everything is fine.", "She's upset.", "She's tired.", "She's hungry."],
+            answer: 1
+        },
+        {
+            question: "How do you fix a bad mood?",
+            options: ["Give your lame ass advice.", "Ignore her and let her cry.", "Get some flowers.", "Apologize and explain."],
+            answer: 2
+        },
+        {
+            question: "What's the one thing you've been meaning to do but haven't done yet?",
+            options: ["make spinach ravioli.", "buy a digicam.", "take her to mumbai.", "finish watching TS documentary."],
+            correctAnswers: [0,1, 2,3], 
+    	multi: true
+        },
+        {
+            question: "What should you NEVER forget?",
+            options: ["brushing your teeth.", "going to work.", "daily gm messages.", "eating."],
+            answer: 2
+        },
+        {
+            question: "When she says 'ok bye goodnight', what should you do?",
+            options: ["say 'ok gn' and cut the call (like u always do).", "beg her to stay for few more minutes and pamper her.", "sleep before her on call.", "you dont know."],
+            answer: 1
+        },
+        {
+            question: "How to make her smile?",
+            options: ["sit and share memes.", "you dont know.", "send her food.", "call and talk for a while."],
+            answer: 3
+        },
+        {
+            question: "What's her favorite thing about you?",
+            options: ["your intelligence.", "your laughter.", "your peepee.", "all of the above."],
+            answer: 2
+        },
+        {
+            question: "How to cheer her after a tough day?",
+            options: ["Listen patiently.", "Give advice.", "Distract her.", "Get on a flight and see her!"],
+            answer: 3
+        },
+        {
+            question: "What's the best way to say 'I love you'?",
+            options: ["Keep saying it often.", "Remember small things.", "Give her expensive gifts.", "Love bomb her."],
+            answer: 1
+        }
+    ];
+
+    let currentQuestionIndex = 0;
+    let correctAnswers = 0;
+
+    // Audio elements
+    const correctSound = document.getElementById("correctSound");
+    const wrongSound = document.getElementById("wrongSound");
+    const winSound = document.getElementById("winSound");
+
+    // Elements
+    const startBtn = document.getElementById("startBtn");
+    const startScreen = document.getElementById("startScreen");
+    const gameUI = document.getElementById("gameUI");
+    const gameArea = document.getElementById("gameArea");
+    const scoreSpan = document.getElementById("score");
+    const comboSpan = document.getElementById("combo");
+    const timeSpan = document.getElementById("time");
+    const quizScreen = document.getElementById("quizScreen");
+    const questionText = document.getElementById("questionText");
+    const optionsDiv = document.getElementById("options");
+    const submitAnswerBtn = document.getElementById("submitAnswerBtn");
+    const winScreen = document.getElementById("winScreen");
+    const openMessageBtn = document.getElementById("openMessageBtn");
+    const finalMessageDiv = document.getElementById("finalMessage");
+
+    startBtn.addEventListener("click", startGame);
+
+    function startGame() {
+        startScreen.classList.add("hidden");
+        gameUI.classList.remove("hidden");
+        score = 0;
+        combo = 1;
+        timeLeft = 100;
+        updateScore();
+        updateCombo();
+        timeSpan.textContent = timeLeft;
+
+        gameInterval = setInterval(spawnBug, 700);
+        timerInterval = setInterval(updateTimer, 1000);
+    }
+
+    function spawnBug() {
+        const bug = document.createElement("div");
+        bug.classList.add("bug");
+
+        const goodBugs = ["💪","🎧","⚡","💻","🧠"];
+        const badBugs = ["💣","👀","😭"];
+
+        let isFake = Math.random() < 0.3;
+
+        if (isFake) {
+            bug.textContent = badBugs[Math.floor(Math.random()*badBugs.length)];
+        } else {
+            bug.textContent = goodBugs[Math.floor(Math.random()*goodBugs.length)];
+        }
+
+        bug.style.top = Math.random() * 70 + "vh";
+        bug.style.left = Math.random() * 90 + "vw";
+
+        bug.onclick = function() {
+            if (isFake) {
+                score -= 2;
+                combo = 1;
+                wrongSound.play();
+                document.body.classList.add("shake");
+                setTimeout(()=>document.body.classList.remove("shake"),300);
+            } else {
+    score++;
+    correctSound.play();
+    createParticles(bug);
+}
+
+            if (score < 0) score = 0;
+
+            updateScore();
+            updateCombo();
+
+            bug.remove();
+
+            if (score >= 24) {
+                endBugGame();
+            }
+        };
+
+        gameArea.appendChild(bug);
+
+        setTimeout(() => { if (bug.parentNode) bug.remove(); }, 2000);
+    }
+
+    function updateScore() {
+        scoreSpan.textContent = score;
+    }
+
+    function updateCombo() {
+        comboSpan.textContent = "x" + combo;
+    }
+
+    function updateTimer() {
+        timeLeft--;
+        timeSpan.textContent = timeLeft;
+
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            clearInterval(gameInterval);
+            alert("MISSION FAILED. Aging continues.");
+            location.reload();
+        }
+    }
+
+    function endBugGame() {
+        clearInterval(timerInterval);
+        clearInterval(gameInterval);
+
+        gameUI.classList.add("hidden");
+        startQuiz();
+    }
+
+    
+    function startQuiz() {
+        quizScreen.classList.remove("hidden");
+        currentQuestionIndex = 0;
+        correctAnswers = 0;
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        submitAnswerBtn.disabled = true;
+        const q = questions[currentQuestionIndex];
+        questionText.textContent = `Q${currentQuestionIndex + 1}. ${q.question}`;
+        optionsDiv.innerHTML = "";
+
+        q.options.forEach((opt, i) => {
+            const optionDiv = document.createElement("div");
+            optionDiv.classList.add("option");
+            const radio = document.createElement("input");
+            radio.type = "radio";
+            radio.name = "option";
+            radio.id = `option${i}`;
+            radio.value = i;
+            radio.addEventListener("change", () => {
+                submitAnswerBtn.disabled = false;
+            });
+
+            const label = document.createElement("label");
+            label.htmlFor = `option${i}`;
+            label.textContent = opt;
+
+            optionDiv.appendChild(radio);
+            optionDiv.appendChild(label);
+            optionsDiv.appendChild(optionDiv);
+        });
+    }
+
+    submitAnswerBtn.addEventListener("click", () => {
+        const selected = document.querySelector('input[name="option"]:checked');
+        if (!selected) return;
+
+        const selectedIndex = parseInt(selected.value);
+        const correctIndex = questions[currentQuestionIndex].answer;
+
+        if (selectedIndex === correctIndex) {
+            correctAnswers++;
+            correctSound.play();
+        } else {
+            wrongSound.play();
+        }
+
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questions.length) {
+            loadQuestion();
+            submitAnswerBtn.disabled = true;
+        } else {
+            endQuiz();
+        }
+    });
+
+    function endQuiz() {
+        quizScreen.classList.add("hidden");
+
+        if (correctAnswers >= 5) {
+            winScreen.classList.remove("hidden");
+        } else {
+            alert(`You scored ${correctAnswers} correct answers. You need at least 5 to unlock the final patch.`);
+            
+            location.reload();
+        }
+    }
+
+   openMessageBtn.addEventListener("click", () => {
+    openMessageBtn.classList.add("vibrate");
+
+    setTimeout(() => {
+        finalMessageDiv.style.display = "block";      
+        surpriseMessage.style.display = "none";       
+        openMessageBtn.classList.remove("vibrate");
+    }, 400);
+});
+
+surpriseBtn.addEventListener("click", () => {
+    surpriseBtn.classList.add("vibrate");
+
+    setTimeout(() => {
+        surpriseMessage.style.display = "block";     
+        finalMessageDiv.style.display = "none";      
+        surpriseBtn.classList.remove("vibrate");
+    }, 400);
+});
+
+ 
+    function createParticles(element) {
+        for (let i=0;i<5;i++) {
+            let particle = document.createElement("div");
+            particle.textContent = "✨";
+            particle.style.position = "absolute";
+            particle.style.left = element.style.left;
+            particle.style.top = element.style.top;
+            particle.style.fontSize = "20px";
+            particle.style.transition = "all 0.5s ease-out";
+            document.getElementById("gameArea").appendChild(particle);
+
+            setTimeout(()=>{
+                particle.style.transform = `translate(${Math.random()*100-50}px, ${Math.random()*100-50}px)`;
+                particle.style.opacity = 0;
+            },10);
+
+            setTimeout(()=>particle.remove(),500);
+        }
+    }
+</script>
+
+</body>
+</html>
