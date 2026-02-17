@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <title>Lakshu's Birthday Countdown 💖</title>
 
-  <!-- Cute bubble font -->
   <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600&display=swap" rel="stylesheet">
 
   <style>
@@ -20,7 +19,6 @@
       text-align: center;
     }
 
-    /* Floating hearts */
     .heart {
       position: absolute;
       color: #ff69b4;
@@ -67,7 +65,7 @@
     .number {
       font-size: 3rem;
       color: white;
-      -webkit-text-stroke: 2px #ffb6c1; /* baby pink outline */
+      -webkit-text-stroke: 2px #ffb6c1;
       text-shadow: 0 0 8px #fff;
     }
 
@@ -82,9 +80,28 @@
       color: #ff69b4;
       font-size: 1.2rem;
     }
+
+    /* Music button */
+    .music-btn {
+      margin-top: 15px;
+      background: #ff69b4;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 20px;
+      font-family: 'Baloo 2', cursive;
+      font-size: 1rem;
+      cursor: pointer;
+      display: none;
+    }
   </style>
 </head>
 <body>
+
+  <!-- 🎵 AUDIO -->
+  <audio id="bgMusic" loop>
+    <source src="sailor-song.mp3" type="audio/mpeg">
+  </audio>
 
   <!-- Hearts generator -->
   <script>
@@ -124,20 +141,38 @@
       </div>
     </div>
 
-    <div class="cute-text">Something special unlocks at 00:00:00💌</div>
+    <div class="cute-text">Something special unlocks at 00:00:00 💌</div>
+    <button id="musicBtn" class="music-btn">Tap for music 💗</button>
   </div>
 
   <script>
-    // 🎯 Set birthday target: Feb 19, 12:00 AM (local time)
+    // 🎵 MUSIC AUTOPLAY ATTEMPT
+    const music = document.getElementById("bgMusic");
+    const musicBtn = document.getElementById("musicBtn");
+
+    function tryPlayMusic() {
+      music.volume = 0.5;
+      music.play().catch(() => {
+        musicBtn.style.display = "inline-block";
+      });
+    }
+
+    musicBtn.addEventListener("click", () => {
+      music.play();
+      musicBtn.style.display = "none";
+    });
+
+    window.addEventListener("load", tryPlayMusic);
+
+    // 🎯 COUNTDOWN
     const targetDate = new Date("Feb 19, 2026 00:00:00").getTime();
 
-    const countdown = setInterval(() => {
+    function updateCountdown() {
       const now = new Date().getTime();
       const distance = targetDate - now;
 
       if (distance <= 0) {
-        clearInterval(countdown);
-        window.location.href = "index.html"; // 🔁 Redirect
+        window.location.replace("index.html");
         return;
       }
 
@@ -150,7 +185,10 @@
       document.getElementById("hours").innerText = String(hours).padStart(2, "0");
       document.getElementById("minutes").innerText = String(minutes).padStart(2, "0");
       document.getElementById("seconds").innerText = String(seconds).padStart(2, "0");
-    }, 1000);
+    }
+
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
   </script>
 
 </body>
